@@ -1,0 +1,22 @@
+services:
+  gyds-rpcnode:
+    build: .
+    container_name: gyds-rpcnode
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8545:8545"   # JSON-RPC (proxied by Nginx)
+      - "8546:8546"   # WebSocket (proxied by Nginx)
+      - "30305:30305" # P2P TCP
+      - "30305:30305/udp"
+    volumes:
+      - rpcnode-data:/app/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "7"
+
+volumes:
+  rpcnode-data:
