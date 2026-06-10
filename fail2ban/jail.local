@@ -1,0 +1,89 @@
+# ══════════════════════════════════════════════════════════
+#  GYDS Chain — RPC Node  /  fail2ban jail.local
+#  Copy to: /etc/fail2ban/jail.local
+#  The setup script does this automatically.
+# ══════════════════════════════════════════════════════════
+
+[DEFAULT]
+# ── Global defaults ─────────────────────────────────────
+bantime        = 3600          # 1 hour default ban
+findtime       = 300           # 5-minute detection window
+maxretry       = 10
+banaction      = ufw           # use UFW to apply bans
+banaction_allports = ufw
+loglevel       = INFO
+logtarget      = /var/log/fail2ban.log
+backend        = auto
+
+# Ignore localhost and private ranges
+ignoreip       = 127.0.0.1/8 ::1 10.0.0.0/8 172.16.0.0/12 192.168.0.0/16
+
+# Email alerts (set to your address to enable)
+# destemail     = admin@yourdomain.com
+# sender        = fail2ban@yourdomain.com
+# action        = %(action_mwl)s
+
+# ── SSH hardening ────────────────────────────────────────
+[sshd]
+enabled        = true
+port           = ssh
+filter         = sshd
+logpath        = %(sshd_log)s
+maxretry       = 3
+bantime        = 86400         # 24-hour ban for SSH brute force
+findtime       = 600
+
+# ── RPC flood: too many requests from one IP ─────────────
+# Triggers on Nginx 429 (rate-limited) responses
+[gyds-rpc-flood]
+enabled        = true
+filter         = gyds-rpc-flood
+port           = http,https,8545,8546
+logpath        = /var/log/nginx/access.log
+                 /var/log/nginx/gyds-rpcnode-access.log
+maxretry       = 5             # 5 rate-limited hits → ban
+findtime       = 60            # within 60 seconds
+bantime        = 3600          # ban 1 hour
+
+# ── Bad RPC: malformed or invalid JSON-RPC requests ──────
+# Triggers on Nginx 400 responses
+[gyds-rpc-badrpc]
+enabled        = true
+filter         = gyds-rpc-badrpc
+port           = http,https,8545,8546
+logpath        = /var/log/nginx/access.log
+                 /var/log/nginx/gyds-rpcnode-access.log
+maxretry       = 20            # 20 bad requests
+findtime       = 120           # within 2 minutes
+bantime        = 1800          # ban 30 minutes
+
+# ── Scanner/probe: suspicious 404 or method probing ──────
+[gyds-scan]
+enabled        = true
+filter         = gyds-scan
+port           = http,https,8545,8546
+logpath        = /var/log/nginx/access.log
+                 /var/log/nginx/gyds-rpcnode-access.log
+maxretry       = 5
+findtime       = 300           # within 5 minutes
+bantime        = 7200          # 2-hour ban for scanners
+
+# ── WebSocket flood ──────────────────────────────────────
+[gyds-ws-flood]
+enabled        = true
+filter         = gyds-ws-flood
+port           = 8546
+logpath        = /var/log/nginx/access.log
+maxretry       = 20            # 20 WS upgrade attempts
+findtime       = 60
+bantime        = 3600
+
+# ── Repeated bans → longer sentence ──────────────────────
+[recidive]
+enabled        = true
+filter         = recidive
+logpath        = /var/log/fail2ban.log
+action         = ufw
+bantime        = 604800        # 7 days for repeat offenders
+findtime       = 86400
+maxretry       = 3
