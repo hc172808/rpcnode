@@ -9,6 +9,7 @@ import (
         "io/fs"
         "math/big"
         "net/http"
+        "net/url"
         "strconv"
         "strings"
         "sync"
@@ -87,10 +88,26 @@ func (s *Server) handleDashboard(w http.ResponseWriter, r *http.Request) {
         http.FileServer(http.FS(sub)).ServeHTTP(w, r)
 }
 
+func (s *Server) handleDocs(w http.ResponseWriter, r *http.Request) {
+        sub, err := fs.Sub(staticFiles, "static")
+        if err != nil {
+                http.Error(w, "docs unavailable", http.StatusInternalServerError)
+                return
+        }
+        w.Header().Set("Content-Type", "text/html; charset=utf-8")
+        http.FileServer(http.FS(sub)).ServeHTTP(w, &http.Request{
+                Method: r.Method,
+                URL:    &url.URL{Path: "/docs.html"},
+                Header: r.Header,
+        })
+}
+
 func (s *Server) setupRoutes() {
         r := mux.NewRouter()
         r.HandleFunc("/health", s.handleHealth).Methods("GET")
         r.HandleFunc("/metrics", s.handleMetrics).Methods("GET")
+        r.HandleFunc("/docs", s.handleDocs).Methods("GET")
+        r.HandleFunc("/docs/", s.handleDocs).Methods("GET")
         r.HandleFunc("/", s.handleDashboard).Methods("GET")
         r.HandleFunc("/", s.handleJSONRPC).Methods("POST", "OPTIONS")
         r.HandleFunc("/rpc", s.handleJSONRPC).Methods("POST", "OPTIONS")

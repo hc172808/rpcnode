@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>GYDS Chain — Developer Docs</title>
+<style>
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--border:#30363d;
+  --text:#e6edf3;--muted:#8b949e;--accent:#f7c948;--accent2:#58a6ff;
+  --green:#3fb950;--red:#f85149;--purple:#bc8cff;--code-bg:#010409;
+  --nav-w:260px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;display:flex;min-height:100vh}
+a{color:var(--accent2);text-decoration:none}a:hover{text-decoration:underline}
+code,pre{font-family:'JetBrains Mono','Fira Code',monospace}
+
+/* ── Nav ── */
+nav{width:var(--nav-w);min-width:var(--nav-w);background:var(--bg2);border-right:1px solid var(--border);height:100vh;position:sticky;top:0;overflow-y:auto;padding:0 0 2rem}
+.nav-logo{padding:1.25rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem}
+.nav-logo .chain-icon{width:36px;height:36px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#000}
+.nav-logo h1{font-size:.95rem;font-weight:700;line-height:1.2}
+.nav-logo small{color:var(--muted);font-size:.7rem}
+.nav-section{padding:.75rem 1rem .25rem;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+nav ul{list-style:none}
+nav ul li a{display:block;padding:.35rem 1rem;font-size:.82rem;color:var(--muted);border-left:2px solid transparent;transition:all .15s}
+nav ul li a:hover,nav ul li a.active{color:var(--text);border-left-color:var(--accent);background:rgba(247,201,72,.05);text-decoration:none}
+.badge-new{background:var(--green);color:#000;font-size:.55rem;font-weight:700;padding:.1rem .35rem;border-radius:9px;margin-left:.4rem;vertical-align:middle}
+
+/* ── Content ── */
+main{flex:1;max-width:900px;padding:2.5rem 2rem;overflow-x:hidden}
+section{margin-bottom:3.5rem;scroll-margin-top:1rem}
+h2{font-size:1.5rem;font-weight:700;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.6rem}
+h2 .icon{font-size:1.2rem}
+h3{font-size:1.1rem;font-weight:600;margin:1.5rem 0 .6rem}
+h4{font-size:.9rem;font-weight:600;color:var(--accent);margin:.8rem 0 .3rem;font-family:'JetBrains Mono','Fira Code',monospace}
+p{color:#c9d1d9;margin-bottom:.75rem;font-size:.9rem}
+
+/* ── Cards / Grids ── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+/* ── Net config ── */
+.net-table{width:100%;border-collapse:collapse;font-size:.85rem}
+.net-table th{background:var(--bg3);padding:.6rem .9rem;text-align:left;font-weight:600;color:var(--muted);border-bottom:1px solid var(--border)}
+.net-table td{padding:.6rem .9rem;border-bottom:1px solid var(--border)}
+.net-table tr:last-child td{border-bottom:none}
+.net-table td:first-child{color:var(--muted);white-space:nowrap}
+.net-table td:last-child{font-family:'JetBrains Mono','Fira Code',monospace;color:var(--accent)}
+.net-table .copy-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:.1rem .5rem;border-radius:4px;cursor:pointer;font-size:.7rem;margin-left:.5rem;transition:all .15s}
+.net-table .copy-btn:hover{background:var(--bg3);color:var(--text)}
+
+/* ── Steps ── */
+.steps{counter-reset:step}
+.step{display:flex;gap:1rem;margin-bottom:1.5rem}
+.step-num{flex-shrink:0;width:28px;height:28px;background:var(--accent);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;counter-increment:step;margin-top:.15rem}
+.step-body{flex:1}
+.step-title{font-weight:600;margin-bottom:.3rem;font-size:.95rem}
+
+/* ── Code blocks ── */
+.code-block{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:.6rem 0}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:.45rem .85rem;background:var(--bg3);border-bottom:1px solid var(--border)}
+.code-lang{font-size:.7rem;color:var(--muted);font-weight:600;text-transform:uppercase}
+.copy-code{background:none;border:1px solid var(--border);color:var(--muted);padding:.15rem .55rem;border-radius:4px;cursor:pointer;font-size:.7rem;transition:all .15s}
+.copy-code:hover{background:var(--bg2);color:var(--text)}
+.code-block pre{padding:1rem;overflow-x:auto;font-size:.8rem;line-height:1.65}
+.kw{color:#ff7b72}.fn{color:#d2a8ff}.str{color:#a5d6ff}.num{color:#f2cc60}.cmt{color:#8b949e}.typ{color:#ffa657}.var{color:#e6edf3}
+
+/* ── API Method cards ── */
+.method-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:1.25rem}
+.method-header{padding:.75rem 1rem;display:flex;align-items:center;gap:.75rem;background:var(--bg3)}
+.method-name{font-family:'JetBrains Mono','Fira Code',monospace;font-weight:700;font-size:.9rem;color:var(--text)}
+.method-badge{font-size:.65rem;font-weight:700;padding:.15rem .5rem;border-radius:4px}
+.badge-gyds{background:rgba(247,201,72,.15);color:var(--accent);border:1px solid rgba(247,201,72,.3)}
+.badge-eth{background:rgba(88,166,255,.15);color:var(--accent2);border:1px solid rgba(88,166,255,.3)}
+.badge-net{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.3)}
+.method-desc{padding:.75rem 1rem;font-size:.84rem;color:#c9d1d9;border-bottom:1px solid var(--border)}
+.method-body{padding:.85rem 1rem}
+.param-row{display:flex;gap:.75rem;margin-bottom:.35rem;font-size:.82rem;align-items:flex-start}
+.param-name{font-family:'JetBrains Mono','Fira Code',monospace;color:var(--purple);min-width:130px;flex-shrink:0}
+.param-type{color:var(--accent);min-width:80px;flex-shrink:0;font-family:'JetBrains Mono','Fira Code',monospace;font-size:.78rem}
+.param-desc{color:var(--muted)}
+.response-label{font-size:.75rem;font-weight:600;color:var(--green);text-transform:uppercase;margin:.75rem 0 .3rem}
+
+/* ── Smart contract ── */
+.contract-fn{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:.6rem .9rem;margin:.4rem 0;font-size:.82rem}
+.fn-sig{font-family:'JetBrains Mono','Fira Code',monospace;color:var(--purple);margin-bottom:.2rem}
+.fn-meta{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.3rem}
+.fn-tag{font-size:.65rem;padding:.1rem .4rem;border-radius:4px;font-weight:600}
+.tag-view{background:rgba(88,166,255,.15);color:var(--accent2)}
+.tag-write{background:rgba(248,81,73,.15);color:var(--red)}
+.tag-payable{background:rgba(63,185,80,.15);color:var(--green)}
+.tag-onlyOwner{background:rgba(247,201,72,.15);color:var(--accent)}
+
+/* ── Alert boxes ── */
+.alert{border-radius:8px;padding:.85rem 1rem;margin:.75rem 0;font-size:.84rem;display:flex;gap:.6rem}
+.alert-info{background:rgba(88,166,255,.08);border:1px solid rgba(88,166,255,.3);color:#c9d1d9}
+.alert-warn{background:rgba(247,201,72,.08);border:1px solid rgba(247,201,72,.3);color:#c9d1d9}
+.alert-icon{font-size:1rem;flex-shrink:0;margin-top:.05rem}
+
+/* ── Inline code ── */
+ic{display:inline-block;background:var(--bg3);color:var(--accent2);padding:.05rem .45rem;border-radius:4px;font-family:'JetBrains Mono','Fira Code',monospace;font-size:.82em;border:1px solid var(--border)}
+
+/* ── TOC highlight ── */
+:target{animation:highlight .8s ease}
+@keyframes highlight{0%{background:rgba(247,201,72,.1)}100%{background:transparent}}
+
+/* ── Footer ── */
+footer{text-align:center;padding:2rem;color:var(--muted);font-size:.78rem;border-top:1px solid var(--border);margin-top:3rem}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR NAV ══════════════════════════════ -->
+<nav id="sidebar">
+  <div class="nav-logo">
+    <div class="chain-icon">G</div>
+    <div>
+      <h1>GYDS Chain</h1>
+      <small>Developer Documentation</small>
+    </div>
+  </div>
+
+  <p class="nav-section">Getting Started</p>
+  <ul>
+    <li><a href="#network">Network Config</a></li>
+    <li><a href="#metamask">MetaMask Setup</a></li>
+    <li><a href="#quickstart">Quick Start</a></li>
+  </ul>
+
+  <p class="nav-section">JSON-RPC API</p>
+  <ul>
+    <li><a href="#api-overview">Overview &amp; Authentication</a></li>
+    <li><a href="#api-gyds">GYDS Methods <span class="badge-new">custom</span></a></li>
+    <li><a href="#api-eth">Ethereum Methods</a></li>
+    <li><a href="#api-net">Net / Web3 Methods</a></li>
+  </ul>
+
+  <p class="nav-section">Smart Contracts</p>
+  <ul>
+    <li><a href="#contracts-faucet">GYDSFaucet</a></li>
+    <li><a href="#contracts-staking">GYDSStaking</a></li>
+  </ul>
+
+  <p class="nav-section">SDK</p>
+  <ul>
+    <li><a href="#sdk-install">Installation</a></li>
+    <li><a href="#sdk-client">GYDSClient</a></li>
+    <li><a href="#sdk-examples">Examples</a></li>
+    <li><a href="#sdk-batch">Batch Calls</a></li>
+  </ul>
+
+  <p class="nav-section">Hardhat</p>
+  <ul>
+    <li><a href="#hardhat-setup">Project Setup</a></li>
+    <li><a href="#hardhat-deploy">Deploying Contracts</a></li>
+  </ul>
+
+  <p class="nav-section">Node Operations</p>
+  <ul>
+    <li><a href="#nodes-overview">Node Types</a></li>
+    <li><a href="#nodes-rpc">RPC Node</a></li>
+    <li><a href="#nodes-validator">Validator Node</a></li>
+    <li><a href="#nodes-security">Security &amp; Firewall</a></li>
+  </ul>
+</nav>
+
+<!-- ══ MAIN CONTENT ═══════════════════════════════ -->
+<main>
+  <div style="margin-bottom:2rem">
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:.5rem">
+      <div style="width:48px;height:48px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.4rem;color:#000">G</div>
+      <div>
+        <div style="font-size:1.8rem;font-weight:800">GYDS Chain</div>
+        <div style="color:var(--muted);font-size:.9rem">EVM-compatible blockchain · Chain ID 13370 · Symbol GYDS</div>
+      </div>
+    </div>
+    <p style="color:#c9d1d9;font-size:.92rem;max-width:660px">
+      GYDS Chain is a high-performance, Ethereum-compatible blockchain. This reference covers the full JSON-RPC API, smart contract interfaces, JavaScript SDK, and Hardhat deployment tooling.
+    </p>
+  </div>
+
+  <!-- ═══ NETWORK CONFIG ════════════════════════════ -->
+  <section id="network">
+    <h2><span class="icon">🌐</span> Network Configuration</h2>
+    <div class="card">
+      <table class="net-table">
+        <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Network Name</td><td>GYDS Chain <button class="copy-btn" onclick="copy('GYDS Chain',this)">copy</button></td></tr>
+          <tr><td>Chain ID</td><td>13370 <button class="copy-btn" onclick="copy('13370',this)">copy</button></td></tr>
+          <tr><td>Currency Symbol</td><td>GYDS <button class="copy-btn" onclick="copy('GYDS',this)">copy</button></td></tr>
+          <tr><td>Decimals</td><td>18</td></tr>
+          <tr><td>RPC URL (primary)</td><td>https://rpc.netlifegy.com <button class="copy-btn" onclick="copy('https://rpc.netlifegy.com',this)">copy</button></td></tr>
+          <tr><td>RPC URL (backup)</td><td>https://rpc2.netlifegy.com <button class="copy-btn" onclick="copy('https://rpc2.netlifegy.com',this)">copy</button></td></tr>
+          <tr><td>WebSocket</td><td>wss://rpc.netlifegy.com/ws <button class="copy-btn" onclick="copy('wss://rpc.netlifegy.com/ws',this)">copy</button></td></tr>
+          <tr><td>Block Explorer</td><td>https://explorer.netlifegy.com <button class="copy-btn" onclick="copy('https://explorer.netlifegy.com',this)">copy</button></td></tr>
+          <tr><td>Block Time</td><td>~3 seconds</td></tr>
+          <tr><td>Consensus</td><td>Proof of Authority (PoA)</td></tr>
+          <tr><td>Block Reward</td><td>2 GYDS / block</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="grid-3" style="margin-top:1rem">
+      <div class="card">
+        <div style="color:var(--muted);font-size:.75rem;margin-bottom:.3rem">TOTAL SUPPLY CAP</div>
+        <div style="font-size:1.4rem;font-weight:700;color:var(--accent)">210,000,000</div>
+        <div style="color:var(--muted);font-size:.78rem">GYDS tokens</div>
+      </div>
+      <div class="card">
+        <div style="color:var(--muted);font-size:.75rem;margin-bottom:.3rem">BLOCK REWARD</div>
+        <div style="font-size:1.4rem;font-weight:700;color:var(--green)">2 GYDS</div>
+        <div style="color:var(--muted);font-size:.78rem">halvings at 105M blocks</div>
+      </div>
+      <div class="card">
+        <div style="color:var(--muted);font-size:.75rem;margin-bottom:.3rem">MIN VALIDATOR STAKE</div>
+        <div style="font-size:1.4rem;font-weight:700;color:var(--purple)">32,000</div>
+        <div style="color:var(--muted);font-size:.78rem">GYDS required</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ METAMASK ════════════════════════════════ -->
+  <section id="metamask">
+    <h2><span class="icon">🦊</span> MetaMask Setup</h2>
+    <p>Add GYDS Chain to MetaMask in under 60 seconds:</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Open MetaMask → Networks dropdown → Add Network</div>
+          <p>Click the network selector at the top of MetaMask, then click <strong>Add Network</strong> → <strong>Add a network manually</strong>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Fill in the network details</div>
+          <div class="card" style="margin-top:.5rem">
+            <table class="net-table">
+              <tbody>
+                <tr><td>Network Name</td><td>GYDS Chain</td></tr>
+                <tr><td>New RPC URL</td><td>https://rpc.netlifegy.com</td></tr>
+                <tr><td>Chain ID</td><td>13370</td></tr>
+                <tr><td>Currency Symbol</td><td>GYDS</td></tr>
+                <tr><td>Block Explorer URL</td><td>https://explorer.netlifegy.com</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Click Save — you're done!</div>
+          <p>MetaMask will switch to GYDS Chain automatically. Your GYDS balance will appear once the chain is connected.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Programmatic network add (ethers.js / viem)</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">javascript</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre><span class="kw">await</span> window.ethereum.<span class="fn">request</span>({
+  <span class="str">method</span>: <span class="str">'wallet_addEthereumChain'</span>,
+  <span class="str">params</span>: [{
+    chainId:         <span class="str">'0x343A'</span>,  <span class="cmt">// 13370 in hex</span>
+    chainName:       <span class="str">'GYDS Chain'</span>,
+    nativeCurrency:  { name: <span class="str">'GYDS'</span>, symbol: <span class="str">'GYDS'</span>, decimals: <span class="num">18</span> },
+    rpcUrls:         [<span class="str">'https://rpc.netlifegy.com'</span>],
+    blockExplorerUrls:[<span class="str">'https://explorer.netlifegy.com'</span>],
+  }],
+});</pre>
+    </div>
+  </section>
+
+  <!-- ═══ QUICK START ═════════════════════════════ -->
+  <section id="quickstart">
+    <h2><span class="icon">⚡</span> Quick Start</h2>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">bash</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre><span class="cmt"># Install the SDK</span>
+npm install @gydschain/sdk ethers
+
+<span class="cmt"># Or with yarn</span>
+yarn add @gydschain/sdk ethers</pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">typescript</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre><span class="kw">import</span> { <span class="typ">GYDSClient</span> } <span class="kw">from</span> <span class="str">'@gydschain/sdk'</span>;
+
+<span class="kw">const</span> <span class="var">client</span> = <span class="kw">new</span> <span class="fn">GYDSClient</span>({
+  rpcUrl: <span class="str">'https://rpc.netlifegy.com'</span>,
+});
+
+<span class="cmt">// Get current block number</span>
+<span class="kw">const</span> <span class="var">block</span> = <span class="kw">await</span> client.<span class="fn">getBlockNumber</span>();
+console.<span class="fn">log</span>(<span class="str">`Current block: <span class="var">${block}</span>`</span>);
+
+<span class="cmt">// Get GYDS balance</span>
+<span class="kw">const</span> <span class="var">balance</span> = <span class="kw">await</span> client.<span class="fn">getBalance</span>(<span class="str">'0xYourAddress'</span>);
+console.<span class="fn">log</span>(<span class="str">`Balance: <span class="var">${balance}</span> GYDS`</span>);
+
+<span class="cmt">// Get active validators</span>
+<span class="kw">const</span> { <span class="var">validators</span> } = <span class="kw">await</span> client.<span class="fn">getValidatorSet</span>();
+console.<span class="fn">log</span>(<span class="str">`<span class="var">${validators.length}</span> active validators`</span>);</pre>
+    </div>
+  </section>
+
+  <!-- ═══ API OVERVIEW ══════════════════════════════ -->
+  <section id="api-overview">
+    <h2><span class="icon">📡</span> JSON-RPC API Overview</h2>
+    <p>All RPC calls use standard JSON-RPC 2.0 over HTTP POST.</p>
+
+    <div class="grid-2">
+      <div class="card">
+        <div style="font-weight:600;margin-bottom:.4rem">Endpoint</div>
+        <ic>POST https://rpc.netlifegy.com</ic>
+        <div style="color:var(--muted);font-size:.8rem;margin-top:.4rem">Also accepts WebSocket at <ic>wss://rpc.netlifegy.com/ws</ic></div>
+      </div>
+      <div class="card">
+        <div style="font-weight:600;margin-bottom:.4rem">Request format</div>
+        <div style="font-size:.82rem;color:#c9d1d9">Content-Type: <ic>application/json</ic><br>Body: JSON-RPC 2.0 object</div>
+      </div>
+    </div>
+
+    <h3>Example request</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">bash</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre>curl -X POST https://rpc.netlifegy.com \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}'</span></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">json — response</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre>{ <span class="str">"jsonrpc"</span>: <span class="str">"2.0"</span>, <span class="str">"id"</span>: <span class="num">1</span>, <span class="str">"result"</span>: <span class="str">"0x1a4"</span> }</pre>
+    </div>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>Batch requests are supported — send an array of request objects and receive an array of responses. See <a href="#sdk-batch">Batch Calls</a> in the SDK section.</div>
+    </div>
+  </section>
+
+  <!-- ═══ GYDS CUSTOM METHODS ═══════════════════════ -->
+  <section id="api-gyds">
+    <h2><span class="icon">🔶</span> GYDS Custom Methods</h2>
+    <p>These methods are unique to GYDS Chain and not part of the Ethereum standard.</p>
+
+    <!-- gyds_validatorSet -->
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-name">gyds_validatorSet</span>
+        <span class="method-badge badge-gyds">GYDS</span>
+      </div>
+      <div class="method-desc">Returns the current active validator set with their addresses and status.</div>
+      <div class="method-body">
+        <h4>Parameters</h4>
+        <div style="color:var(--muted);font-size:.82rem">None</div>
+        <div class="response-label">Response</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">json</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+          <pre>{
+  <span class="str">"validators"</span>: [
+    { <span class="str">"address"</span>: <span class="str">"0xABC..."</span>, <span class="str">"status"</span>: <span class="str">"active"</span>, <span class="str">"index"</span>: <span class="num">0</span> },
+    { <span class="str">"address"</span>: <span class="str">"0xDEF..."</span>, <span class="str">"status"</span>: <span class="str">"active"</span>, <span class="str">"index"</span>: <span class="num">1</span> }
+  ],
+  <span class="str">"epoch"</span>: <span class="num">42</span>,
+  <span class="str">"chainId"</span>: <span class="num">13370</span>
+}</pre>
+        </div>
+        <h4>cURL example</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">bash</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+          <pre>curl -X POST https://rpc.netlifegy.com \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"jsonrpc":"2.0","method":"gyds_validatorSet","params":[],"id":1}'</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- gyds_nodeInfo -->
+    <div class="method-card">
+      <div class="method-header">
+        <span class="method-name">gyds_nodeInfo</span>
+        <span class="method-badge badge-gyds">GYDS</span>
+      </div>
+      <div class="method-desc">Returns information about the connected RPC node: version, type, block height, and peer count.</div>
+      <div class="method-body">
+        <h4>Parameters</h4>
+        <div style="color:var(--muted);font-size:.82rem">None</div>
+        <div class="response-label">Response</div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">json</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+          <pre>{
+  <span class="str">"version"</span>:     <span class="str">"gydschain/rpcnode@v1.0.0"</span>,
+  <span class="str">"nodeType"</span>:    <span class="str">"rpc"</span>,
+  <span class="str">"chainId"</span>:     <span class="num">13370</span>,
+  <span class="str">"blockHeight"</span>: <span class="num">1234</span>,
+  <span class="str">"peers"</span>:       <span class="num">5</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ ETH METHODS ═══════════════════════════════ -->
+  <section id="api-eth">
+    <h2><span class="icon">🔷</span> Ethereum Methods</h2>
+    <p>All standard Ethereum JSON-RPC methods are supported. GYDS is EVM-compatible — existing tools (ethers.js, web3.js, viem, Hardhat, Foundry) work without modification.</p>
+
+    <div class="method-card">
+      <div class="method-header"><span class="method-name">eth_blockNumber</span><span class="method-badge badge-eth">ETH</span></div>
+      <div class="method-desc">Returns the current block number.</div>
+      <div class="method-body">
+        <h4>Returns</h4>
+        <div class="param-row"><span class="param-name">result</span><span class="param-type">QUANTITY</span><span class="param-desc">hex-encoded integer of the current block number</span></div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">response</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div><pre>{ <span class="str">"result"</span>: <span class="str">"0x1a4"</span> }</pre></div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header"><span class="method-name">eth_getBalance</span><span class="method-badge badge-eth">ETH</span></div>
+      <div class="method-desc">Returns the GYDS balance of an account at a given block.</div>
+      <div class="method-body">
+        <h4>Parameters</h4>
+        <div class="param-row"><span class="param-name">address</span><span class="param-type">DATA, 20B</span><span class="param-desc">Account address to query</span></div>
+        <div class="param-row"><span class="param-name">blockTag</span><span class="param-type">TAG</span><span class="param-desc"><ic>"latest"</ic>, <ic>"earliest"</ic>, or hex block number</span></div>
+        <div class="code-block"><div class="code-header"><span class="code-lang">bash</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+        <pre>curl -X POST https://rpc.netlifegy.com \
+  -d <span class="str">'{"jsonrpc":"2.0","method":"eth_getBalance",
+     "params":["0xADDRESS","latest"],"id":1}'</span></pre></div>
+        <div class="response-label">Returns</div>
+        <div style="font-size:.82rem;color:#c9d1d9">Wei value as hex. Divide by 10<sup>18</sup> to get GYDS.</div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header"><span class="method-name">eth_sendRawTransaction</span><span class="method-badge badge-eth">ETH</span></div>
+      <div class="method-desc">Broadcasts a signed transaction to the network.</div>
+      <div class="method-body">
+        <h4>Parameters</h4>
+        <div class="param-row"><span class="param-name">data</span><span class="param-type">DATA</span><span class="param-desc">Signed transaction hex (RLP-encoded)</span></div>
+        <div class="response-label">Returns</div>
+        <div class="param-row"><span class="param-name">txHash</span><span class="param-type">DATA, 32B</span><span class="param-desc">Transaction hash</span></div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header"><span class="method-name">eth_getTransactionReceipt</span><span class="method-badge badge-eth">ETH</span></div>
+      <div class="method-desc">Returns the receipt for a mined transaction.</div>
+      <div class="method-body">
+        <h4>Parameters</h4>
+        <div class="param-row"><span class="param-name">txHash</span><span class="param-type">DATA, 32B</span><span class="param-desc">Transaction hash</span></div>
+        <div class="response-label">Key response fields</div>
+        <div class="param-row"><span class="param-name">status</span><span class="param-type">QUANTITY</span><span class="param-desc"><ic>0x1</ic> = success, <ic>0x0</ic> = reverted</span></div>
+        <div class="param-row"><span class="param-name">gasUsed</span><span class="param-type">QUANTITY</span><span class="param-desc">Gas consumed by this transaction</span></div>
+        <div class="param-row"><span class="param-name">logs</span><span class="param-type">ARRAY</span><span class="param-desc">Event logs emitted</span></div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header"><span class="method-name">eth_call</span><span class="method-badge badge-eth">ETH</span></div>
+      <div class="method-desc">Executes a read-only call against a smart contract without creating a transaction.</div>
+      <div class="method-body">
+        <h4>Parameters</h4>
+        <div class="param-row"><span class="param-name">transaction</span><span class="param-type">OBJECT</span><span class="param-desc">Call object: <ic>to</ic>, <ic>data</ic>, optional <ic>from</ic>, <ic>gas</ic>, <ic>value</ic></span></div>
+        <div class="param-row"><span class="param-name">blockTag</span><span class="param-type">TAG</span><span class="param-desc">Block to execute against (<ic>"latest"</ic>)</span></div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header"><span class="method-name">eth_estimateGas</span><span class="method-badge badge-eth">ETH</span></div>
+      <div class="method-desc">Returns an estimate of the gas required for a transaction.</div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header"><span class="method-name">eth_getBlockByNumber</span><span class="method-badge badge-eth">ETH</span></div>
+      <div class="method-desc">Returns block information by number.</div>
+      <div class="method-body">
+        <h4>Parameters</h4>
+        <div class="param-row"><span class="param-name">blockNumber</span><span class="param-type">QUANTITY|TAG</span><span class="param-desc">Hex block number or <ic>"latest"</ic></span></div>
+        <div class="param-row"><span class="param-name">fullTx</span><span class="param-type">BOOLEAN</span><span class="param-desc"><ic>true</ic> returns full tx objects, <ic>false</ic> returns hashes only</span></div>
+      </div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header"><span class="method-name">eth_getTransactionByHash</span><span class="method-badge badge-eth">ETH</span></div>
+      <div class="method-desc">Returns transaction details by hash.</div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header"><span class="method-name">eth_gasPrice</span><span class="method-badge badge-eth">ETH</span></div>
+      <div class="method-desc">Returns the current gas price in wei.</div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header"><span class="method-name">eth_chainId</span><span class="method-badge badge-eth">ETH</span></div>
+      <div class="method-desc">Returns the chain ID. Always <ic>0x343A</ic> (13370) on GYDS Chain.</div>
+    </div>
+
+    <div class="method-card">
+      <div class="method-header"><span class="method-name">eth_getTransactionCount</span><span class="method-badge badge-eth">ETH</span></div>
+      <div class="method-desc">Returns the nonce (number of transactions sent) for an address.</div>
+    </div>
+  </section>
+
+  <!-- ═══ NET / WEB3 ══════════════════════════════ -->
+  <section id="api-net">
+    <h2><span class="icon">🔌</span> Net / Web3 Methods</h2>
+
+    <div class="method-card">
+      <div class="method-header"><span class="method-name">net_version</span><span class="method-badge badge-net">NET</span></div>
+      <div class="method-desc">Returns the network ID as a string. Always <ic>"13370"</ic>.</div>
+    </div>
+    <div class="method-card">
+      <div class="method-header"><span class="method-name">net_peerCount</span><span class="method-badge badge-net">NET</span></div>
+      <div class="method-desc">Returns the number of connected peers.</div>
+    </div>
+    <div class="method-card">
+      <div class="method-header"><span class="method-name">web3_clientVersion</span><span class="method-badge badge-net">WEB3</span></div>
+      <div class="method-desc">Returns the RPC node client version string.</div>
+    </div>
+    <div class="method-card">
+      <div class="method-header"><span class="method-name">eth_syncing</span><span class="method-badge badge-eth">ETH</span></div>
+      <div class="method-desc">Returns sync status. Returns <ic>false</ic> when the node is fully synced.</div>
+    </div>
+  </section>
+
+  <!-- ═══ CONTRACTS — FAUCET ════════════════════════ -->
+  <section id="contracts-faucet">
+    <h2><span class="icon">🚰</span> GYDSFaucet Contract</h2>
+    <div class="alert alert-info">
+      <span class="alert-icon">📦</span>
+      <div>Source: <ic>developer-tools/hardhat/contracts/GYDSFaucet.sol</ic> — Deploy with <ic>npm run deploy</ic></div>
+    </div>
+    <p>A testnet faucet that drips GYDS to users on a 24-hour cooldown. Owner can adjust the drip amount and pause the faucet.</p>
+
+    <h3>Constructor</h3>
+    <div class="contract-fn">
+      <div class="fn-sig">constructor(uint256 _dripAmount, uint256 _cooldown)</div>
+      <div style="font-size:.8rem;color:var(--muted)">Deploys faucet. <ic>_dripAmount</ic> in wei (default: 100 GYDS = 100e18). <ic>_cooldown</ic> in seconds (default: 86400).</div>
+    </div>
+
+    <h3>Write Functions</h3>
+    <div class="contract-fn">
+      <div class="fn-sig">request()</div>
+      <div class="fn-meta"><span class="fn-tag tag-write">write</span><span class="fn-tag tag-payable">nonpayable</span></div>
+      <div style="font-size:.8rem;color:#c9d1d9">Claim a drip of GYDS. Reverts if called within the cooldown period or if faucet balance is insufficient.</div>
+    </div>
+    <div class="contract-fn">
+      <div class="fn-sig">drip(address recipient)</div>
+      <div class="fn-meta"><span class="fn-tag tag-write">write</span><span class="fn-tag tag-onlyOwner">onlyOwner</span></div>
+      <div style="font-size:.8rem;color:#c9d1d9">Owner can drip to any address, bypassing cooldown.</div>
+    </div>
+    <div class="contract-fn">
+      <div class="fn-sig">setDripAmount(uint256 amount)</div>
+      <div class="fn-meta"><span class="fn-tag tag-write">write</span><span class="fn-tag tag-onlyOwner">onlyOwner</span></div>
+      <div style="font-size:.8rem;color:#c9d1d9">Change the drip amount (in wei).</div>
+    </div>
+    <div class="contract-fn">
+      <div class="fn-sig">pause() / unpause()</div>
+      <div class="fn-meta"><span class="fn-tag tag-write">write</span><span class="fn-tag tag-onlyOwner">onlyOwner</span></div>
+      <div style="font-size:.8rem;color:#c9d1d9">Pause or resume the faucet.</div>
+    </div>
+
+    <h3>Read Functions</h3>
+    <div class="contract-fn">
+      <div class="fn-sig">nextRequestAt(address user) → uint256</div>
+      <div class="fn-meta"><span class="fn-tag tag-view">view</span></div>
+      <div style="font-size:.8rem;color:#c9d1d9">Timestamp when <ic>user</ic> can next call <ic>request()</ic>.</div>
+    </div>
+    <div class="contract-fn">
+      <div class="fn-sig">balance() → uint256</div>
+      <div class="fn-meta"><span class="fn-tag tag-view">view</span></div>
+      <div style="font-size:.8rem;color:#c9d1d9">Current GYDS balance held by the faucet.</div>
+    </div>
+
+    <h3>Usage example</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">javascript</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre><span class="kw">import</span> { ethers } <span class="kw">from</span> <span class="str">'ethers'</span>;
+
+<span class="kw">const</span> <span class="var">abi</span> = [
+  <span class="str">'function request() external'</span>,
+  <span class="str">'function nextRequestAt(address) view returns (uint256)'</span>,
+  <span class="str">'function balance() view returns (uint256)'</span>,
+];
+<span class="kw">const</span> <span class="var">provider</span> = <span class="kw">new</span> ethers.<span class="fn">JsonRpcProvider</span>(<span class="str">'https://rpc.netlifegy.com'</span>);
+<span class="kw">const</span> <span class="var">faucet</span>   = <span class="kw">new</span> ethers.<span class="fn">Contract</span>(FAUCET_ADDRESS, abi, signer);
+
+<span class="cmt">// Check cooldown</span>
+<span class="kw">const</span> <span class="var">next</span> = <span class="kw">await</span> faucet.<span class="fn">nextRequestAt</span>(userAddress);
+<span class="kw">if</span> (Date.<span class="fn">now</span>() / <span class="num">1000</span> &gt;= Number(next)) {
+  <span class="kw">const</span> <span class="var">tx</span> = <span class="kw">await</span> faucet.<span class="fn">request</span>();
+  <span class="kw">await</span> tx.<span class="fn">wait</span>();
+  console.<span class="fn">log</span>(<span class="str">'Drip received!'</span>);
+}</pre>
+    </div>
+  </section>
+
+  <!-- ═══ CONTRACTS — STAKING ════════════════════════ -->
+  <section id="contracts-staking">
+    <h2><span class="icon">🔒</span> GYDSStaking Contract</h2>
+    <div class="alert alert-info">
+      <span class="alert-icon">📦</span>
+      <div>Source: <ic>developer-tools/hardhat/contracts/GYDSStaking.sol</ic></div>
+    </div>
+    <p>Full validator staking contract with slashing, rewards, and uptime tracking. Requires a minimum stake of <strong>32,000 GYDS</strong> to register as a validator.</p>
+
+    <h3>Write Functions</h3>
+    <div class="contract-fn">
+      <div class="fn-sig">register() payable</div>
+      <div class="fn-meta"><span class="fn-tag tag-write">write</span><span class="fn-tag tag-payable">payable</span></div>
+      <div style="font-size:.8rem;color:#c9d1d9">Register as a validator. Must send ≥ 32,000 GYDS. Reverts if already registered.</div>
+    </div>
+    <div class="contract-fn">
+      <div class="fn-sig">addStake() payable</div>
+      <div class="fn-meta"><span class="fn-tag tag-write">write</span><span class="fn-tag tag-payable">payable</span></div>
+      <div style="font-size:.8rem;color:#c9d1d9">Add more GYDS to an existing stake position.</div>
+    </div>
+    <div class="contract-fn">
+      <div class="fn-sig">unstake()</div>
+      <div class="fn-meta"><span class="fn-tag tag-write">write</span></div>
+      <div style="font-size:.8rem;color:#c9d1d9">Exit validator set and withdraw all staked GYDS. Subject to unbonding delay.</div>
+    </div>
+    <div class="contract-fn">
+      <div class="fn-sig">claimRewards()</div>
+      <div class="fn-meta"><span class="fn-tag tag-write">write</span></div>
+      <div style="font-size:.8rem;color:#c9d1d9">Claim accumulated block rewards to the caller's address.</div>
+    </div>
+    <div class="contract-fn">
+      <div class="fn-sig">slash(address validator, uint256 amount)</div>
+      <div class="fn-meta"><span class="fn-tag tag-write">write</span><span class="fn-tag tag-onlyOwner">onlyOwner</span></div>
+      <div style="font-size:.8rem;color:#c9d1d9">Slash a misbehaving validator's stake. Slashed GYDS goes to the slash fund.</div>
+    </div>
+
+    <h3>Read Functions</h3>
+    <div class="contract-fn">
+      <div class="fn-sig">getStake(address validator) → uint256</div>
+      <div class="fn-meta"><span class="fn-tag tag-view">view</span></div>
+      <div style="font-size:.8rem;color:#c9d1d9">Returns staked GYDS for <ic>validator</ic>.</div>
+    </div>
+    <div class="contract-fn">
+      <div class="fn-sig">getPendingRewards(address validator) → uint256</div>
+      <div class="fn-meta"><span class="fn-tag tag-view">view</span></div>
+      <div style="font-size:.8rem;color:#c9d1d9">Returns unclaimed rewards for <ic>validator</ic>.</div>
+    </div>
+    <div class="contract-fn">
+      <div class="fn-sig">isValidator(address) → bool</div>
+      <div class="fn-meta"><span class="fn-tag tag-view">view</span></div>
+      <div style="font-size:.8rem;color:#c9d1d9">Returns <ic>true</ic> if address is an active validator.</div>
+    </div>
+
+    <h3>Events</h3>
+    <div class="card" style="font-size:.82rem">
+      <div style="margin-bottom:.5rem"><ic>ValidatorRegistered(address validator, uint256 stake)</ic></div>
+      <div style="margin-bottom:.5rem"><ic>StakeAdded(address validator, uint256 amount)</ic></div>
+      <div style="margin-bottom:.5rem"><ic>ValidatorUnstaked(address validator, uint256 amount)</ic></div>
+      <div style="margin-bottom:.5rem"><ic>RewardsClaimed(address validator, uint256 amount)</ic></div>
+      <div><ic>ValidatorSlashed(address validator, uint256 amount)</ic></div>
+    </div>
+  </section>
+
+  <!-- ═══ SDK INSTALL ════════════════════════════════ -->
+  <section id="sdk-install">
+    <h2><span class="icon">📦</span> SDK — Installation</h2>
+    <p>The <ic>@gydschain/sdk</ic> package is a typed JavaScript/TypeScript client for the GYDS Chain RPC API.</p>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">bash</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre>npm install @gydschain/sdk
+<span class="cmt"># peer dep</span>
+npm install ethers</pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">bash — yarn</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre>yarn add @gydschain/sdk ethers</pre>
+    </div>
+  </section>
+
+  <!-- ═══ SDK CLIENT ════════════════════════════════ -->
+  <section id="sdk-client">
+    <h2><span class="icon">🔧</span> GYDSClient API</h2>
+
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">typescript — constructor</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre><span class="kw">import</span> { <span class="typ">GYDSClient</span> } <span class="kw">from</span> <span class="str">'@gydschain/sdk'</span>;
+
+<span class="kw">const</span> <span class="var">client</span> = <span class="kw">new</span> <span class="fn">GYDSClient</span>({
+  rpcUrl:  <span class="str">'https://rpc.netlifegy.com'</span>,  <span class="cmt">// required</span>
+  chainId: <span class="num">13370</span>,                          <span class="cmt">// optional, defaults to 13370</span>
+  timeout: <span class="num">10000</span>,                          <span class="cmt">// ms, default 10 000</span>
+});</pre>
+    </div>
+
+    <h3>Methods</h3>
+    <div class="card" style="font-size:.83rem">
+      <table style="width:100%;border-collapse:collapse">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border)">
+            <th style="text-align:left;padding:.4rem .6rem;color:var(--muted)">Method</th>
+            <th style="text-align:left;padding:.4rem .6rem;color:var(--muted)">Returns</th>
+            <th style="text-align:left;padding:.4rem .6rem;color:var(--muted)">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:.4rem .6rem;font-family:monospace;color:var(--purple)">getBlockNumber()</td><td style="padding:.4rem .6rem;color:var(--accent)">Promise&lt;number&gt;</td><td style="padding:.4rem .6rem;color:var(--muted)">Latest block height</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:.4rem .6rem;font-family:monospace;color:var(--purple)">getBalance(address)</td><td style="padding:.4rem .6rem;color:var(--accent)">Promise&lt;string&gt;</td><td style="padding:.4rem .6rem;color:var(--muted)">Balance in GYDS (formatted)</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:.4rem .6rem;font-family:monospace;color:var(--purple)">getBlock(number|"latest")</td><td style="padding:.4rem .6rem;color:var(--accent)">Promise&lt;Block&gt;</td><td style="padding:.4rem .6rem;color:var(--muted)">Block by number or tag</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:.4rem .6rem;font-family:monospace;color:var(--purple)">getTransaction(hash)</td><td style="padding:.4rem .6rem;color:var(--accent)">Promise&lt;Tx&gt;</td><td style="padding:.4rem .6rem;color:var(--muted)">Transaction by hash</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:.4rem .6rem;font-family:monospace;color:var(--purple)">getReceipt(hash)</td><td style="padding:.4rem .6rem;color:var(--accent)">Promise&lt;Receipt&gt;</td><td style="padding:.4rem .6rem;color:var(--muted)">Transaction receipt</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:.4rem .6rem;font-family:monospace;color:var(--purple)">sendRawTx(hex)</td><td style="padding:.4rem .6rem;color:var(--accent)">Promise&lt;string&gt;</td><td style="padding:.4rem .6rem;color:var(--muted)">Broadcast signed tx, returns hash</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:.4rem .6rem;font-family:monospace;color:var(--purple)">waitForTransaction(hash)</td><td style="padding:.4rem .6rem;color:var(--accent)">Promise&lt;Receipt&gt;</td><td style="padding:.4rem .6rem;color:var(--muted)">Poll until confirmed</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:.4rem .6rem;font-family:monospace;color:var(--purple)">getValidatorSet()</td><td style="padding:.4rem .6rem;color:var(--accent)">Promise&lt;ValidatorSet&gt;</td><td style="padding:.4rem .6rem;color:var(--muted)">Active validators (GYDS custom)</td></tr>
+          <tr><td style="padding:.4rem .6rem;font-family:monospace;color:var(--purple)">getNodeInfo()</td><td style="padding:.4rem .6rem;color:var(--accent)">Promise&lt;NodeInfo&gt;</td><td style="padding:.4rem .6rem;color:var(--muted)">Node version &amp; peers (GYDS custom)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══ SDK EXAMPLES ══════════════════════════════ -->
+  <section id="sdk-examples">
+    <h2><span class="icon">💡</span> SDK Examples</h2>
+
+    <h3>Send a GYDS transfer</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">typescript</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre><span class="kw">import</span> { ethers } <span class="kw">from</span> <span class="str">'ethers'</span>;
+
+<span class="kw">const</span> <span class="var">provider</span> = <span class="kw">new</span> ethers.<span class="fn">JsonRpcProvider</span>(<span class="str">'https://rpc.netlifegy.com'</span>);
+<span class="kw">const</span> <span class="var">wallet</span>   = <span class="kw">new</span> ethers.<span class="fn">Wallet</span>(PRIVATE_KEY, provider);
+
+<span class="kw">const</span> <span class="var">tx</span> = <span class="kw">await</span> wallet.<span class="fn">sendTransaction</span>({
+  to:      <span class="str">'0xRecipientAddress'</span>,
+  value:   ethers.<span class="fn">parseEther</span>(<span class="str">'10'</span>),  <span class="cmt">// 10 GYDS</span>
+  chainId: <span class="num">13370</span>,
+});
+
+<span class="kw">const</span> <span class="var">receipt</span> = <span class="kw">await</span> tx.<span class="fn">wait</span>();
+console.<span class="fn">log</span>(<span class="str">`Confirmed in block <span class="var">${receipt.blockNumber}</span>`</span>);</pre>
+    </div>
+
+    <h3>Read validator set</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">typescript</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre><span class="kw">import</span> { <span class="typ">GYDSClient</span> } <span class="kw">from</span> <span class="str">'@gydschain/sdk'</span>;
+
+<span class="kw">const</span> <span class="var">client</span> = <span class="kw">new</span> <span class="fn">GYDSClient</span>({ rpcUrl: <span class="str">'https://rpc.netlifegy.com'</span> });
+<span class="kw">const</span> { <span class="var">validators</span>, <span class="var">epoch</span> } = <span class="kw">await</span> client.<span class="fn">getValidatorSet</span>();
+
+<span class="kw">for</span> (<span class="kw">const</span> <span class="var">v</span> <span class="kw">of</span> validators) {
+  console.<span class="fn">log</span>(<span class="str">`[<span class="var">${v.index}</span>] <span class="var">${v.address}</span> — <span class="var">${v.status}</span>`</span>);
+}
+console.<span class="fn">log</span>(<span class="str">`Current epoch: <span class="var">${epoch}</span>`</span>);</pre>
+    </div>
+
+    <h3>Deploy a contract with Hardhat</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">javascript — scripts/deploy.js</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre><span class="kw">const</span> [<span class="var">deployer</span>] = <span class="kw">await</span> ethers.<span class="fn">getSigners</span>();
+console.<span class="fn">log</span>(<span class="str">'Deploying from:'</span>, deployer.address);
+
+<span class="kw">const</span> <span class="var">Faucet</span> = <span class="kw">await</span> ethers.<span class="fn">getContractFactory</span>(<span class="str">'GYDSFaucet'</span>);
+<span class="kw">const</span> <span class="var">faucet</span> = <span class="kw">await</span> Faucet.<span class="fn">deploy</span>(
+  ethers.<span class="fn">parseEther</span>(<span class="str">'100'</span>),  <span class="cmt">// drip 100 GYDS</span>
+  <span class="num">86400</span>                      <span class="cmt">// 24h cooldown</span>
+);
+<span class="kw">await</span> faucet.<span class="fn">waitForDeployment</span>();
+console.<span class="fn">log</span>(<span class="str">'Faucet deployed to:'</span>, <span class="kw">await</span> faucet.<span class="fn">getAddress</span>());</pre>
+    </div>
+  </section>
+
+  <!-- ═══ SDK BATCH ══════════════════════════════════ -->
+  <section id="sdk-batch">
+    <h2><span class="icon">⚡</span> SDK — Batch Calls</h2>
+    <p>Send multiple RPC calls in a single HTTP request for maximum efficiency.</p>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">typescript</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre><span class="kw">import</span> { <span class="typ">GYDSClient</span> } <span class="kw">from</span> <span class="str">'@gydschain/sdk'</span>;
+
+<span class="kw">const</span> <span class="var">client</span> = <span class="kw">new</span> <span class="fn">GYDSClient</span>({ rpcUrl: <span class="str">'https://rpc.netlifegy.com'</span> });
+
+<span class="kw">const</span> [blockNum, gasPrice, validators] = <span class="kw">await</span> client.<span class="fn">batch</span>([
+  { method: <span class="str">'eth_blockNumber'</span>,    params: [] },
+  { method: <span class="str">'eth_gasPrice'</span>,        params: [] },
+  { method: <span class="str">'gyds_validatorSet'</span>,   params: [] },
+]);
+
+console.<span class="fn">log</span>(<span class="str">'Block:'</span>,      parseInt(blockNum.result,   <span class="num">16</span>));
+console.<span class="fn">log</span>(<span class="str">'Gas price:'</span>, parseInt(gasPrice.result,   <span class="num">16</span>), <span class="str">'wei'</span>);
+console.<span class="fn">log</span>(<span class="str">'Validators:'</span>,validators.result.validators);</pre>
+    </div>
+
+    <h3>Raw HTTP batch request</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">bash</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre>curl -X POST https://rpc.netlifegy.com \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'[
+    {"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1},
+    {"jsonrpc":"2.0","method":"gyds_validatorSet","params":[],"id":2},
+    {"jsonrpc":"2.0","method":"gyds_nodeInfo","params":[],"id":3}
+  ]'</span></pre>
+    </div>
+  </section>
+
+  <!-- ═══ HARDHAT SETUP ══════════════════════════════ -->
+  <section id="hardhat-setup">
+    <h2><span class="icon">🪖</span> Hardhat Setup</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Clone developer tools</div>
+          <div class="code-block"><div class="code-header"><span class="code-lang">bash</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+          <pre>git clone https://github.com/hc172808/rpcnode.git
+cd rpcnode/developer-tools/hardhat
+npm install</pre></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Set your deployer private key</div>
+          <div class="code-block"><div class="code-header"><span class="code-lang">bash</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+          <pre>cp .env.example .env
+<span class="cmt"># Edit .env:</span>
+PRIVATE_KEY=0xYourPrivateKeyHere
+RPC_URL=https://rpc.netlifegy.com</pre></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Deploy to GYDS Chain</div>
+          <div class="code-block"><div class="code-header"><span class="code-lang">bash</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+          <pre>npm run deploy
+<span class="cmt"># Deploys GYDSFaucet + GYDSStaking</span>
+<span class="cmt"># Faucet auto-funded with 100 GYDS</span></pre></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ HARDHAT DEPLOY ══════════════════════════════ -->
+  <section id="hardhat-deploy">
+    <h2><span class="icon">🚀</span> Hardhat — hardhat.config.js</h2>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">javascript</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre><span class="kw">require</span>(<span class="str">'@nomicfoundation/hardhat-toolbox'</span>);
+<span class="kw">require</span>(<span class="str">'dotenv/config'</span>);
+
+<span class="kw">const</span> <span class="var">PRIVATE_KEY</span> = process.env.PRIVATE_KEY || <span class="str">'0x0000000000000000000000000000000000000000000000000000000000000001'</span>;
+
+module.exports = {
+  solidity: <span class="str">'0.8.24'</span>,
+  networks: {
+    gyds: {
+      url:      process.env.RPC_URL || <span class="str">'https://rpc.netlifegy.com'</span>,
+      chainId:  <span class="num">13370</span>,
+      accounts: [PRIVATE_KEY],
+    },
+    gyds_local: {
+      url:      <span class="str">'http://localhost:8545'</span>,
+      chainId:  <span class="num">13370</span>,
+      accounts: [PRIVATE_KEY],
+    },
+  },
+  defaultNetwork: <span class="str">'gyds'</span>,
+};</pre>
+    </div>
+
+    <h3>Common Hardhat commands</h3>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">bash</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre><span class="cmt"># Compile contracts</span>
+npx hardhat compile
+
+<span class="cmt"># Deploy to GYDS mainnet</span>
+npx hardhat run scripts/deploy.js --network gyds
+
+<span class="cmt"># Interact with deployed contract</span>
+npx hardhat console --network gyds
+
+<span class="cmt"># Verify contract (block explorer)</span>
+npx hardhat verify --network gyds CONTRACT_ADDRESS</pre>
+    </div>
+  </section>
+
+  <!-- ═══ NODES OVERVIEW ════════════════════════════ -->
+  <section id="nodes-overview">
+    <h2><span class="icon">🖥️</span> Node Types</h2>
+    <div class="grid-2">
+      <div class="card">
+        <div style="font-weight:700;color:var(--accent);margin-bottom:.4rem">🔷 RPC Node</div>
+        <div style="font-size:.82rem;color:#c9d1d9">Public-facing JSON-RPC endpoint. Handles eth_* calls, serves the dashboard UI, proxies requests to the chain. One per public-facing server.</div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;color:var(--green);margin-bottom:.4rem">🟢 Validator Node</div>
+        <div style="font-size:.82rem;color:#c9d1d9">Signs and proposes blocks. Requires 32,000 GYDS stake. Runs P2P gossip protocol. Private — never expose port 8545 publicly.</div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;color:var(--accent2);margin-bottom:.4rem">🔵 Full Node</div>
+        <div style="font-size:.82rem;color:#c9d1d9">Stores full chain history, validates all transactions, maintains mempool and receipts. Used for indexing and block explorers.</div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;color:var(--purple);margin-bottom:.4rem">🟣 Lite Node</div>
+        <div style="font-size:.82rem;color:#c9d1d9">Lightweight SPV node. Verifies block headers only. Suitable for mobile or resource-constrained environments.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ RPC NODE ════════════════════════════════ -->
+  <section id="nodes-rpc">
+    <h2><span class="icon">🔷</span> Running an RPC Node</h2>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">bash — Ubuntu 22.04+</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre><span class="cmt"># Clone and install</span>
+git clone https://github.com/hc172808/rpcnode.git
+cd rpcnode
+chmod +x setup-rpcnode-server.sh
+sudo bash setup-rpcnode-server.sh
+
+<span class="cmt"># Or quick start with Docker</span>
+docker run -p 8545:8545 -p 9000:9000 \
+  -e CHAIN_ID=13370 \
+  ghcr.io/hc172808/rpcnode:latest</pre>
+    </div>
+
+    <h3>Configuration</h3>
+    <div class="card" style="font-size:.83rem">
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="border-bottom:1px solid var(--border)">
+          <th style="text-align:left;padding:.4rem .6rem;color:var(--muted)">Env var</th>
+          <th style="text-align:left;padding:.4rem .6rem;color:var(--muted)">Default</th>
+          <th style="text-align:left;padding:.4rem .6rem;color:var(--muted)">Description</th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:.4rem .6rem;font-family:monospace;color:var(--purple)">CHAIN_ID</td><td style="padding:.4rem .6rem;color:var(--accent)">13370</td><td style="padding:.4rem .6rem;color:var(--muted)">GYDS Chain ID</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:.4rem .6rem;font-family:monospace;color:var(--purple)">RPC_PORT</td><td style="padding:.4rem .6rem;color:var(--accent)">8545</td><td style="padding:.4rem .6rem;color:var(--muted)">JSON-RPC HTTP port</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:.4rem .6rem;font-family:monospace;color:var(--purple)">WS_PORT</td><td style="padding:.4rem .6rem;color:var(--accent)">9000</td><td style="padding:.4rem .6rem;color:var(--muted)">WebSocket port</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:.4rem .6rem;font-family:monospace;color:var(--purple)">HOST</td><td style="padding:.4rem .6rem;color:var(--accent)">0.0.0.0</td><td style="padding:.4rem .6rem;color:var(--muted)">Bind address</td></tr>
+          <tr><td style="padding:.4rem .6rem;font-family:monospace;color:var(--purple)">CORS_ORIGINS</td><td style="padding:.4rem .6rem;color:var(--accent)">*</td><td style="padding:.4rem .6rem;color:var(--muted)">CORS allowed origins</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ═══ VALIDATOR NODE ════════════════════════════ -->
+  <section id="nodes-validator">
+    <h2><span class="icon">🟢</span> Running a Validator Node</h2>
+    <div class="alert alert-warn">
+      <span class="alert-icon">⚠️</span>
+      <div>The validator node repository is <strong>private</strong>. Contact the GYDS Chain team to get access after completing your stake registration.</div>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">bash — requirements</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+      <pre><span class="cmt"># Ubuntu 22.04+ · 4 vCPU · 8 GB RAM · 100 GB SSD</span>
+chmod +x setup-validatornode-server.sh
+sudo bash setup-validatornode-server.sh
+
+<span class="cmt"># P2P gossip port (must be open)</span>
+ufw allow 30303/tcp
+ufw allow 30303/udp</pre>
+    </div>
+    <h3>Validator features</h3>
+    <div class="grid-2">
+      <div class="card">
+        <div style="font-weight:600;margin-bottom:.3rem">P2P Gossip</div>
+        <div style="font-size:.82rem;color:var(--muted)">BroadcastBlock, BroadcastTx, peer discovery, checkpoint sync via gossip protocol</div>
+      </div>
+      <div class="card">
+        <div style="font-weight:600;margin-bottom:.3rem">Block Rewards</div>
+        <div style="font-size:.82rem;color:var(--muted)">2 GYDS per block. Halving at 105M blocks. UptimeTracker monitors missed slots.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SECURITY ═══════════════════════════════ -->
+  <section id="nodes-security">
+    <h2><span class="icon">🛡️</span> Security &amp; Firewall</h2>
+    <div class="grid-2">
+      <div class="card">
+        <div style="font-weight:600;margin-bottom:.6rem">UFW firewall rules</div>
+        <div class="code-block" style="margin:0"><div class="code-header"><span class="code-lang">bash</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+        <pre style="font-size:.75rem">ufw default deny incoming
+ufw allow ssh
+ufw allow 443/tcp   <span class="cmt"># HTTPS</span>
+ufw allow 80/tcp    <span class="cmt"># HTTP</span>
+ufw allow 8545/tcp  <span class="cmt"># RPC (restrict to trusted IPs)</span>
+ufw allow 30303     <span class="cmt"># P2P</span>
+ufw enable</pre></div>
+      </div>
+      <div class="card">
+        <div style="font-weight:600;margin-bottom:.6rem">WireGuard VPN</div>
+        <div style="font-size:.82rem;color:#c9d1d9;margin-bottom:.4rem">All inter-node communication (validator ↔ validator, validator ↔ full node) runs over a private WireGuard VPN mesh.</div>
+        <div class="code-block" style="margin:0"><div class="code-header"><span class="code-lang">bash</span><button class="copy-code" onclick="copyBlock(this)">Copy</button></div>
+        <pre style="font-size:.75rem">sudo bash setup-wireguard.sh</pre></div>
+      </div>
+    </div>
+    <div class="alert alert-warn" style="margin-top:1rem">
+      <span class="alert-icon">⚠️</span>
+      <div>Never expose your validator node's RPC port (8545) to the public internet. Use the RPC node as a public-facing proxy, keeping your validators behind the VPN and firewall.</div>
+    </div>
+  </section>
+
+  <footer>
+    GYDS Chain · Chain ID 13370 · Symbol GYDS · Decimals 18<br>
+    <a href="https://github.com/hc172808/rpcnode">github.com/hc172808/rpcnode</a> · Built with ❤️ on GYDS Chain
+  </footer>
+</main>
+
+<script>
+function copy(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓';
+    btn.style.color = 'var(--green)';
+    setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1500);
+  });
+}
+
+function copyBlock(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.style.color = 'var(--green)';
+    setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1500);
+  });
+}
+
+// Highlight active nav link on scroll
+const sections = document.querySelectorAll('section[id]');
+const links = document.querySelectorAll('nav ul li a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const link = document.querySelector(`nav a[href="#${e.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-30% 0px -60% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
