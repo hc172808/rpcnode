@@ -1,0 +1,40 @@
+# ══════════════════════════════════════════════════════════════
+#  GYDS Chain — Uptime Kuma status page
+#
+#  Monitors all 4 GYDS nodes and sends alerts via
+#  Email / Discord / Telegram / Slack when any node goes down.
+#
+#  Usage:
+#    docker compose -f docker-compose.uptime.yml up -d
+#
+#  Then open:
+#    http://YOUR_SERVER:3001
+#
+#  First visit: create your admin account, then add monitors
+#  using the values in uptime-monitors.json as a reference.
+# ══════════════════════════════════════════════════════════════
+
+version: '3.9'
+
+networks:
+  monitoring:
+    driver: bridge
+
+volumes:
+  uptime_data: {}
+
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: gyds-uptime-kuma
+    restart: unless-stopped
+    networks: [monitoring]
+    ports:
+      - "3001:3001"
+    volumes:
+      - uptime_data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      UPTIME_KUMA_PORT: 3001
+    labels:
+      - "com.gydschain.role=uptime-kuma"

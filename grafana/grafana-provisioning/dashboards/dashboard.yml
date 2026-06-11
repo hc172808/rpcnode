@@ -1,0 +1,17 @@
+# Auto-provisions the GYDS dashboard into Grafana on first start.
+# Dashboard JSON is read from the same directory.
+
+apiVersion: 1
+
+providers:
+  - name: GYDS Chain
+    orgId: 1
+    folder: GYDS Chain
+    folderUid: gyds
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards
+      foldersFromFilesStructure: false

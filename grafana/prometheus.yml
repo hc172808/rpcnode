@@ -1,0 +1,55 @@
+# ══════════════════════════════════════════════════════════════
+#  Prometheus scrape config for GYDS Chain RPC Node
+#
+#  Add this block to your existing prometheus.yml, or use it
+#  as a standalone config if you're running Prometheus just for GYDS.
+#
+#  The /metrics endpoint is served by the GYDS rpcnode at:
+#    http://<your-rpc-server>/metrics
+#
+#  If you're running Prometheus + Grafana via Docker Compose,
+#  see the docker-compose.monitoring.yml file in this directory.
+# ══════════════════════════════════════════════════════════════
+
+global:
+  scrape_interval:     10s   # scrape every 10 seconds
+  evaluation_interval: 10s
+  external_labels:
+    chain: gyds
+    network: mainnet
+
+scrape_configs:
+
+  # ── GYDS RPC Node ──────────────────────────────────────────
+  - job_name: gyds_rpcnode
+    static_configs:
+      - targets:
+          - 'YOUR_RPC_SERVER_IP_OR_DOMAIN:80'  # change to your server
+        labels:
+          node: rpcnode
+          chain_id: '13370'
+          symbol: GYDS
+    metrics_path: /metrics
+    scrape_interval: 10s
+    scrape_timeout:  5s
+    # If your node is behind HTTPS:
+    # scheme: https
+    # tls_config:
+    #   insecure_skip_verify: false
+
+  # ── Optional: scrape over WireGuard VPN IP ─────────────────
+  # Uncomment if you want to scrape via the VPN tunnel instead
+  # of the public internet (recommended for production).
+  # - job_name: gyds_rpcnode_vpn
+  #   static_configs:
+  #     - targets: ['10.8.0.2:8545']
+  #   metrics_path: /metrics
+  #   scrape_interval: 10s
+
+  # ── Node Exporter (optional — for host-level metrics) ──────
+  # Install on each node: apt-get install prometheus-node-exporter
+  # - job_name: gyds_node_system
+  #   static_configs:
+  #     - targets:
+  #         - 'YOUR_RPC_SERVER_IP:9100'
+  #   scrape_interval: 30s

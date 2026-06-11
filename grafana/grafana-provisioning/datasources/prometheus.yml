@@ -1,0 +1,17 @@
+# Auto-provisioned Prometheus data source for GYDS Chain monitoring
+# This file is loaded automatically by Grafana on startup.
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
+    jsonData:
+      httpMethod: POST
+      prometheusType: Prometheus
+      prometheusVersion: 2.40.0
+      timeInterval: "10s"

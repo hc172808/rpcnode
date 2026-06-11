@@ -1,0 +1,123 @@
+{
+  "_comment": "GYDS Chain — Uptime Kuma monitor reference config. Import via the setup-uptime.sh script or add manually in the UI.",
+  "monitors": [
+    {
+      "name": "GYDS RPC Node — HTTP",
+      "type": "http",
+      "url": "http://YOUR_RPC_SERVER/health",
+      "method": "GET",
+      "interval": 60,
+      "retryInterval": 60,
+      "maxretries": 3,
+      "upsideDown": false,
+      "keyword": "ok",
+      "tags": ["gyds", "rpcnode", "public"],
+      "description": "Public RPC node health endpoint. Returns {status: ok} when healthy."
+    },
+    {
+      "name": "GYDS RPC Node — JSON-RPC",
+      "type": "http",
+      "url": "http://YOUR_RPC_SERVER",
+      "method": "POST",
+      "headers": { "Content-Type": "application/json" },
+      "body": "{\"jsonrpc\":\"2.0\",\"method\":\"eth_blockNumber\",\"params\":[],\"id\":1}",
+      "interval": 60,
+      "retryInterval": 60,
+      "maxretries": 3,
+      "keyword": "result",
+      "tags": ["gyds", "rpcnode", "jsonrpc"],
+      "description": "Verifies the JSON-RPC endpoint returns a block number."
+    },
+    {
+      "name": "GYDS RPC Node — WebSocket",
+      "type": "port",
+      "hostname": "YOUR_RPC_SERVER",
+      "port": 8546,
+      "interval": 60,
+      "retryInterval": 60,
+      "maxretries": 3,
+      "tags": ["gyds", "rpcnode", "websocket"],
+      "description": "TCP check on WebSocket port 8546."
+    },
+    {
+      "name": "GYDS RPC Node — Metrics",
+      "type": "http",
+      "url": "http://YOUR_RPC_SERVER/metrics",
+      "method": "GET",
+      "interval": 60,
+      "retryInterval": 60,
+      "maxretries": 3,
+      "keyword": "gyds_block_height",
+      "tags": ["gyds", "rpcnode", "prometheus"],
+      "description": "Checks that Prometheus metrics are being served."
+    },
+    {
+      "name": "GYDS Validator Node — P2P",
+      "type": "port",
+      "hostname": "YOUR_VALIDATOR_SERVER",
+      "port": 30303,
+      "interval": 60,
+      "retryInterval": 60,
+      "maxretries": 3,
+      "tags": ["gyds", "validator", "p2p", "private"],
+      "description": "TCP check on validator P2P port. RPC (8545) is intentionally not monitored externally."
+    },
+    {
+      "name": "GYDS Full Node — P2P",
+      "type": "port",
+      "hostname": "YOUR_FULLNODE_SERVER",
+      "port": 30303,
+      "interval": 60,
+      "retryInterval": 60,
+      "maxretries": 3,
+      "tags": ["gyds", "fullnode", "p2p", "private"],
+      "description": "TCP check on fullnode P2P port."
+    },
+    {
+      "name": "GYDS Full Node — RPC",
+      "type": "http",
+      "url": "http://YOUR_FULLNODE_SERVER:8545/health",
+      "method": "GET",
+      "interval": 60,
+      "retryInterval": 60,
+      "maxretries": 3,
+      "keyword": "ok",
+      "tags": ["gyds", "fullnode", "rpc", "private"],
+      "description": "Fullnode health check — only reachable if monitoring server is on the same network or VPN."
+    },
+    {
+      "name": "GYDS Lite Node — P2P",
+      "type": "port",
+      "hostname": "YOUR_LITENODE_SERVER",
+      "port": 30303,
+      "interval": 60,
+      "retryInterval": 60,
+      "maxretries": 3,
+      "tags": ["gyds", "litenode", "p2p", "private"],
+      "description": "TCP check on litenode P2P port."
+    },
+    {
+      "name": "GYDS Lite Node — RPC",
+      "type": "http",
+      "url": "http://YOUR_LITENODE_SERVER:8545/health",
+      "method": "GET",
+      "interval": 60,
+      "retryInterval": 60,
+      "maxretries": 3,
+      "keyword": "ok",
+      "tags": ["gyds", "litenode", "rpc", "private"],
+      "description": "Litenode health check — only reachable over VPN or internal network."
+    },
+    {
+      "name": "WireGuard VPN Server — UDP",
+      "type": "port",
+      "hostname": "YOUR_VPN_SERVER",
+      "port": 51820,
+      "interval": 120,
+      "retryInterval": 60,
+      "maxretries": 3,
+      "tags": ["gyds", "wireguard", "vpn"],
+      "description": "Checks WireGuard UDP port is reachable on the VPN server."
+    }
+  ]
+}
