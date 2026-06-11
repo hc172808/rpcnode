@@ -1,0 +1,21 @@
+{
+  "name": "gyds-hardhat",
+  "version": "1.0.0",
+  "description": "Hardhat development environment for GYDS Chain (Chain ID 13370)",
+  "scripts": {
+    "compile":  "hardhat compile",
+    "deploy":   "hardhat run scripts/deploy.js --network gyds",
+    "deploy:local": "hardhat run scripts/deploy.js --network localhost",
+    "verify":   "hardhat verify --network gyds",
+    "console":  "hardhat console --network gyds",
+    "test":     "hardhat test"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.22.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "dotenv": "^16.4.0"
+  }
+}

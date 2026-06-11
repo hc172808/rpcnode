@@ -1,0 +1,18 @@
+{
+  "name": "@gydschain/sdk",
+  "version": "1.0.0",
+  "description": "JavaScript/TypeScript SDK for GYDS Chain (Chain ID 13370)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build":   "tsc",
+    "dev":     "tsc --watch",
+    "test":    "node dist/index.js",
+    "prepare": "npm run build"
+  },
+  "keywords": ["gyds", "blockchain", "ethereum", "rpc", "web3"],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}
