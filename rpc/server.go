@@ -431,6 +431,30 @@ func (s *Server) dispatch(req jsonRPCRequest) jsonRPCResponse {
                 resp.Result = "0x" + hex.EncodeToString([]byte(fmt.Sprintf("%d", time.Now().UnixNano())))[:16]
         case "eth_unsubscribe":
                 resp.Result = true
+        case "gyds_validatorSet":
+                validators := s.chain.Validators()
+                valList := make([]map[string]interface{}, len(validators))
+                for i, v := range validators {
+                        valList[i] = map[string]interface{}{
+                                "address": v,
+                                "status":  "active",
+                                "index":   i,
+                        }
+                }
+                resp.Result = map[string]interface{}{
+                        "validators": valList,
+                        "count":      len(validators),
+                        "epoch":      1,
+                        "chainId":    s.chain.Stats()["chainId"],
+                }
+        case "gyds_nodeInfo":
+                resp.Result = map[string]interface{}{
+                        "nodeType":    "rpc",
+                        "version":     "1.0.0",
+                        "chainId":     s.chain.Stats()["chainId"],
+                        "blockHeight": s.chain.Height(),
+                        "peers":       0,
+                }
         default:
                 resp.Error = map[string]interface{}{
                         "code":    -32601,
