@@ -43,11 +43,38 @@ type Server struct {
         reqTotal  int64
         wsActive  int64
         startTime time.Time
+
+        // filter registry for eth_newFilter / eth_getFilterChanges
+        filters   map[string]*rpcFilter
+        filtersMu sync.Mutex
+        filterSeq uint64
 }
 
 type subscriber struct {
         conn *websocket.Conn
         ch   chan interface{}
+}
+
+// ── Filter registry types ─────────────────────────────────────────────────────
+
+const maxUint64 = ^uint64(0)
+
+type filterKind int
+
+const (
+        filterKindLog     filterKind = iota // eth_newFilter
+        filterKindBlock                     // eth_newBlockFilter
+        filterKindPending                   // eth_newPendingTransactionFilter
+)
+
+type rpcFilter struct {
+        kind      filterKind
+        fromBlock uint64
+        toBlock   uint64     // maxUint64 means "latest"
+        addresses []string   // empty = any address
+        topics    [][]string // currently stored but not evaluated (no EVM)
+        lastBlock uint64     // highest block returned so far (for getFilterChanges)
+        createdAt time.Time
 }
 
 func NewServer(chain *core.Chain, port, wsPort int, host string, corsOrigins []string) *Server {
@@ -56,6 +83,7 @@ func NewServer(chain *core.Chain, port, wsPort int, host string, corsOrigins []s
                 upgrader:  websocket.Upgrader{CheckOrigin: func(r *http.Request) bool { return true }},
                 subs:      make(map[string]*subscriber),
                 pendingTx: make(map[string]*core.Transaction),
+                filters:   make(map[string]*rpcFilter),
                 startTime: time.Now(),
         }
         s.setupRoutes()
