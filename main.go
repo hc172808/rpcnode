@@ -88,13 +88,13 @@ func runNode() error {
 		Int64("chainId", cfg.ChainID).
 		Msg("Starting GYDS litenode")
 
-	chain := core.NewChain(core.GydsGenesis)
+	chain := core.NewChain(core.GydsGenesis, cfg.DataDir)
 	log.Info().Uint64("height", chain.Height()).Msg("Chain initialised from genesis")
 
 	vs := consensus.NewValidatorSet(core.GydsGenesis.Validators)
 	engine := consensus.NewPoSEngine(chain, vs, 5*time.Second)
 
-	rpcSrv := rpc.NewServer(chain, cfg.RPCPort)
+	rpcSrv := rpc.NewServer(chain, cfg.RPCPort, cfg.WSPort, cfg.RPCHost, []string{"*"})
 	engine.OnNewBlock(func(b *core.Block) {
 		log.Info().
 			Uint64("number", b.Header.Number).
@@ -102,7 +102,11 @@ func runNode() error {
 			Int("txs", len(b.Transactions)).
 			Str("validator", b.Header.Validator).
 			Msg("New block")
-		rpcSrv.NotifyNewBlock(b)
+		rpcSrv.BroadcastWS(map[string]interface{}{
+			"type":   "newBlock",
+			"number": b.Header.Number,
+			"hash":   b.Hash,
+		})
 	})
 
 	p2pSrv := p2p.NewServer(cfg.P2PPort, cfg.ChainID, chain.Height)

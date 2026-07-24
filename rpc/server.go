@@ -20,7 +20,7 @@ import (
         "github.com/gorilla/websocket"
         "github.com/rs/zerolog/log"
 
-        "github.com/gydschain/rpcnode/core"
+        "github.com/gydschain/litenode/core"
 )
 
 type Server struct {

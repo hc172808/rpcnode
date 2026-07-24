@@ -6,7 +6,7 @@ import (
         "strings"
         "sync"
 
-        "github.com/gydschain/rpcnode/storage"
+        "github.com/gydschain/litenode/storage"
 )
 
 var (
